@@ -1,11 +1,10 @@
 package com.driver.model;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "admins")
 public class Admin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,9 +13,8 @@ public class Admin {
     private String username;
     private String password;
 
-//    Mapping Admin -> ServiceProvider
-    @OneToMany(mappedBy = "admin",cascade = CascadeType.ALL)
-    private List<ServiceProvider> serviceProviders = new ArrayList<>();
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL)
+    private List<ServiceProvider> serviceProviders;
 
     public Admin() {
     }
