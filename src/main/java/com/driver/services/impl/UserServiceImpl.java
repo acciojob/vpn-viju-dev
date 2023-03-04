@@ -54,13 +54,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User subscribe(Integer userId, Integer serviceProviderId) {
         User user = userRepository3.findById(userId).get();
-        List<ServiceProvider> providerList = user.getServiceProviderList();
         ServiceProvider serviceProvider = serviceProviderRepository3.findById(serviceProviderId).get();
+        List<ServiceProvider> providerList = user.getServiceProviderList();
 
-        //setting user to providers too
-//        List<User> users = serviceProvider.getUsers();
-//        users.add(user);
-//        serviceProvider.setUsers(users);
+
+//        setting user to providers too
+        List<User> users = serviceProvider.getUsers();
+        users.add(user);
+        serviceProvider.setUsers(users);
 
         providerList.add(serviceProvider);
         user.setServiceProviderList(providerList);

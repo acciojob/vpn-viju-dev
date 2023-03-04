@@ -20,6 +20,7 @@ public class ServiceProvider {
 
     //Mapping ServiceProvider -> User
     @ManyToMany //(mappedBy = "serviceProviderList",cascade = CascadeType.ALL)
+    @JoinColumn
     private List<User> users = new ArrayList<>();
 
     //Mapping ServiceProvider -> Connection

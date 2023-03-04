@@ -17,7 +17,7 @@ public class User {
 //    private String originalCountry;
     private String originalIp;
     private String maskedIp; //boolean connected?
-    private boolean connected;
+    private Boolean connected;
 
     //Mapping User -> ServiceProvider
     @ManyToMany(mappedBy = "users",cascade = CascadeType.ALL)
