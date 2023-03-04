@@ -27,60 +27,116 @@ public class ConnectionServiceImpl implements ConnectionService {
 //        if(user.getServiceProviderList() != null){
 //            throw  new RuntimeException("Already connected");
 //        }
-        List<ServiceProvider> providerList = user.getServiceProviderList();
-        for (ServiceProvider provider:providerList){ // along with povider we are chcking is there any connection bet them or not
-            if (provider.getConnectionList() != null){
-                throw  new RuntimeException("Already connected");
-            }
+        System.out.println(user.getOriginalCountry().getCountryName());
+
+//        List<ServiceProvider> providerList = user.getServiceProviderList();
+
+//        for (ServiceProvider provider:providerList){ // along with povider we are chcking is there any connection bet them or not
+//            if (provider.getConnectionList() != null){
+//                throw  new RuntimeException("Already connected");
+//            }
+//        }
+        if (user.getMaskedIp()!=null){
+            throw  new RuntimeException("Already connected");
         }
+        else if (user.getOriginalCountry().getCountryName().equals(countryName)){
+            return user;//do nothing coz user trying to conect same country
+        }
+//        else if(user.getServiceProviderList() == null){ //!user.getServiceProviderList().contains(countryName)// not sure whether can check or not
+//            throw new RuntimeException("Unable to connect");
+//        }
+
+        //if providers exist
+//        for (ServiceProvider provider:providerList){
+//            for (Country country:provider.getCountryList()){
+//                if (country.getCountryName().equals(countryName)){
+//                    throw new RuntimeException("Unable to connect");
+//                }
+//            }
+//        }
 
         //if asking for same country do nothing coz for same country don't require connection
-        if (Objects.equals(user.getOriginalCountry().getCountryName(),countryName)){
-            return user;
-        }
+//        if (Objects.equals(user.getOriginalCountry().getCountryName(),countryName)){
+//            return user;
+//        }
 
-        //
-        if (providerList == null){
-            throw new RuntimeException("Unable to connect");
-        }
-        boolean connected = false;
-        for (ServiceProvider provider:providerList){// use id function
-            if(provider.getCountryList().contains(countryName)){
-                connected = true;
-                Connection connection = new Connection();
-                connection.setUser(user);
-                connection.setServiceProvider(provider);
-//                connectionRepository2.save(connection); // child not require to save
-//                provider.setConnectionList(provider.getConnectionList().add(connection));
-                List<Connection> connectionList = provider.getConnectionList();
-                connectionList.add(connection);
-                provider.setConnectionList(connectionList);
-                //user maskedIp //"updatedCountryCode.serviceProviderId.userId"
 
-                //iterate on countrylist to get countrycode
-                String code="";
-                for (Country country: provider.getCountryList()){
-                    if (Objects.equals(country.getCountryName(),countryName)){
-                        code = country.getCode();
+//        if (providerList == null){
+//            throw new RuntimeException("Unable to connect");
+//        }
+
+        //check from user service providers as well // just change reposlist to user.getproviderlist
+        int id = Integer.MAX_VALUE;
+        List<ServiceProvider> providerList = serviceProviderRepository2.findAll();
+
+        for (ServiceProvider provider:providerList){
+            if (provider.getId() < id){
+//                id = provider.getId();
+                for (Country country:provider.getCountryList()){
+                    System.out.println("checking");
+                    System.out.println(country.getCountryName()+"  "+countryName);
+                    if (country.getCountryName().toString().equalsIgnoreCase(countryName)){ //sometimes toString require to compare strings
+                        System.out.println("yes gotcha");
+                        id=provider.getId();
                     }
                 }
-                user.setMaskedIp(code+"."+provider.getId()+"."+user.getId());
-                break; // break out of loop
-
             }
         }
+        if (id == Integer.MAX_VALUE){
+            throw new RuntimeException("Unable to connect"); //provider is not there present or dont have given country
+        }
+        ServiceProvider serviceProvider = serviceProviderRepository2.findById(id).get();
 
-        userRepository2.save(user); //saved user so other attributes get saved automatically and no need to save coz other are connected already
-//        Connection connection = new Connection();
-//         connection.setUser(userRepository2.findById(userId).get());
-//         connection.se
+        user.setMaskedIp(CountryName.valueOf(countryName).toCode()+"."+serviceProvider.getId()+"."+userId); //"updatedCountryCode.serviceProviderId.userId"
+        user.getServiceProviderList().add(serviceProvider); // added new provider
+
+        Connection connection = new Connection();
+        connection.setServiceProvider(serviceProvider);
+        connection.setUser(user);
+
+        connectionRepository2.save(connection); //make connection // may not required to save child
+        //serviceProvider save?
+
+        userRepository2.save(user);//just changed in maked ip other attr are already conected
         return user;
+//        boolean connected = false;
+//        for (ServiceProvider provider:providerList){// use id function
+//            if(provider.getCountryList().contains(countryName)){
+//                connected = true;
+//                Connection connection = new Connection();
+//                connection.setUser(user);
+//                connection.setServiceProvider(provider);
+////                connectionRepository2.save(connection); // child not require to save
+////                provider.setConnectionList(provider.getConnectionList().add(connection));
+//                List<Connection> connectionList = provider.getConnectionList();
+//                connectionList.add(connection);
+//                provider.setConnectionList(connectionList);
+//                //user maskedIp //"updatedCountryCode.serviceProviderId.userId"
+//
+//                //iterate on countrylist to get countrycode
+//                String code="";
+//                for (Country country: provider.getCountryList()){
+//                    if (Objects.equals(country.getCountryName(),countryName)){
+//                        code = country.getCode();
+//                    }
+//                }
+//                user.setMaskedIp(code+"."+provider.getId()+"."+user.getId());
+//                break; // break out of loop
+//
+//            }
+//        }
+//
+//        userRepository2.save(user); //saved user so other attributes get saved automatically and no need to save coz other are connected already
+////        Connection connection = new Connection();
+////         connection.setUser(userRepository2.findById(userId).get());
+////         connection.se
+//        return user;
 
     }
     @Override
     public User disconnect(int userId) throws Exception {
         User user = userRepository2.findById(userId).get();
-        if (user.getMaskedIp()!=null){
+        if (user.getMaskedIp()==null){
             throw new RuntimeException("Already disconnected");
         }
         user.setMaskedIp(null);

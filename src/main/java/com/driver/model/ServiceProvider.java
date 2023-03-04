@@ -19,8 +19,8 @@ public class ServiceProvider {
     private Admin admin;
 
     //Mapping ServiceProvider -> User
-    @ManyToMany //(mappedBy = "serviceProviderList",cascade = CascadeType.ALL)
-    @JoinColumn
+    @ManyToMany (mappedBy = "serviceProviderList",cascade = CascadeType.ALL)
+    //@JoinColumn
     private List<User> users = new ArrayList<>();
 
     //Mapping ServiceProvider -> Connection

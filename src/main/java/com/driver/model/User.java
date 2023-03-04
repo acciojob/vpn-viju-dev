@@ -20,7 +20,8 @@ public class User {
     private Boolean connected;
 
     //Mapping User -> ServiceProvider
-    @ManyToMany(mappedBy = "users",cascade = CascadeType.ALL)
+    @ManyToMany //(mappedBy = "users",cascade = CascadeType.ALL)
+    @JoinColumn
     private List<ServiceProvider> serviceProviderList = new ArrayList<>();
 
     //Mapping User -> Connection
