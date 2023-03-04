@@ -35,7 +35,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         }
 
         //if asking for same country do nothing coz for same country don't require connection
-        if (Objects.equals(user.getCountry().getCountryName(),countryName)){
+        if (Objects.equals(user.getOriginalCountry().getCountryName(),countryName)){
             return user;
         }
 

@@ -19,7 +19,7 @@ public class ServiceProvider {
     private Admin admin;
 
     //Mapping ServiceProvider -> User
-    @ManyToMany(mappedBy = "serviceProviderList",cascade = CascadeType.ALL)
+    @ManyToMany //(mappedBy = "serviceProviderList",cascade = CascadeType.ALL)
     private List<User> users = new ArrayList<>();
 
     //Mapping ServiceProvider -> Connection

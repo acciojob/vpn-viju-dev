@@ -58,18 +58,32 @@ public class AdminServiceImpl implements AdminService {
 
         Country country = new Country();
        // country.setCountryName(CountryName.valueOf(countryName)); // get enumvalue of countryname coz we didn't use @enumrated
-       CountryName countryName2 ;
-        for (CountryName c:CountryName.values()){
-           if (c.equals(countryName)){
-               countryName2 = CountryName.valueOf(c.toCode());
-           }
-       }
-        CountryName countryName1 = CountryName.valueOf(countryName);
-        System.out.println(countryName1);
-        System.out.println(countryName1.toCode());
-        List<Country> countryList = serviceProvider.getCountryList();
 
-        countryList.add(countryRepository1.findByCountryName(countryName));//String.valueOf(countryName1)) // country.getCountryName().name() //again same enumrated thing
+        //valid loop but not require
+//        for (CountryName c:CountryName.values()){
+//           if (c.toString().equals(countryName)){
+//
+//               country.setCountryName(c); //.name() returns/converts enum to string //CountryName.valueOf(c.name()) and that whole function convert string to enum for database values
+//               country.setCode(c.toCode());
+//           }
+//       }
+
+//        CountryName countryName1 = CountryName.valueOf(countryName);
+//        System.out.println(countryName1);
+//        System.out.println(countryName1.toCode());
+
+        List<Country> countryList = serviceProvider.getCountryList();
+        //set country attrs
+        country.setCountryName(CountryName.valueOf(countryName));
+        country.setCode(CountryName.valueOf(countryName).toCode());
+       // countryList.add(countryRepository1.findByCountryName(country.getCountryName()));//String.valueOf(countryName1)) // country.getCountryName().name() //again same enumrated thing
+
+        //added country in countryList of serviceProvider
+        countryList.add(country);
+        //set provider in country
+        country.setServiceProvider(serviceProvider);
+        serviceProvider.setCountryList(countryList);
+        //save provider
         serviceProviderRepository1.save(serviceProvider);
         return serviceProvider;
     }

@@ -30,14 +30,23 @@ public class UserServiceImpl implements UserService {
         user.setPassword(password);
         //service provider not set because user havent useed any ...its his main country only
 
+        String code = CountryName.valueOf(countryName).toCode();
+        int uid = userRepository3.save(user).getId();
+
         // make ip of user using countrycode and userid
-        Country country = countryRepository3.findByCountryName(countryName);
-        String code = country.getCode();
-        user.setOriginalIp(code+"."+user.getId()); // countrycode.userid
-        user.setCountry(countryRepository3.findByCountryName(countryName));
+        user.setOriginalIp(code+"."+uid);//user.getId() // countrycode.userid
+       // user.setCountry(countryRepository3.findByCountryName(CountryName.valueOf(countryName).toCode()));//getting by code coz in db code is saved
         //no need to set this attributes default is null and false
         user.setMaskedIp(null);
         user.setConnected(false);
+
+        //Country country = countryRepository3.findByCountryName(String.valueOf(CountryName.valueOf(countryName).ordinal()));//countryName
+        Country country = new Country();
+        country.setCountryName(CountryName.valueOf(countryName));
+        country.setCode(CountryName.valueOf(countryName).toCode());
+        country.setUser(user);
+        countryRepository3.save(country);
+        user.setOriginalCountry(country);
         userRepository3.save(user);
         return user;
     }
@@ -49,9 +58,9 @@ public class UserServiceImpl implements UserService {
         ServiceProvider serviceProvider = serviceProviderRepository3.findById(serviceProviderId).get();
 
         //setting user to providers too
-        List<User> users = serviceProvider.getUsers();
-        users.add(user);
-        serviceProvider.setUsers(users);
+//        List<User> users = serviceProvider.getUsers();
+//        users.add(user);
+//        serviceProvider.setUsers(users);
 
         providerList.add(serviceProvider);
         user.setServiceProviderList(providerList);
