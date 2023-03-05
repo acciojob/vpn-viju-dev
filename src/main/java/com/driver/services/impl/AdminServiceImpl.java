@@ -41,7 +41,7 @@ public class AdminServiceImpl implements AdminService {
         //created new provider
         ServiceProvider provider = new ServiceProvider();
         //set admin to provider
-        provider.setAdmin(adminRepository1.findById(adminId).get());
+        provider.setAdmin(admin);
         provider.setName(providerName);
         //added provider in list
         providerList.add(provider);
@@ -74,6 +74,7 @@ public class AdminServiceImpl implements AdminService {
 
         List<Country> countryList = serviceProvider.getCountryList();
         //set country attrs
+        countryName = countryName.toUpperCase(); //transfer to uppercase so that it will get match with enum even if its in smal
         country.setCountryName(CountryName.valueOf(countryName));
         country.setCode(CountryName.valueOf(countryName).toCode());
        // countryList.add(countryRepository1.findByCountryName(country.getCountryName()));//String.valueOf(countryName1)) // country.getCountryName().name() //again same enumrated thing

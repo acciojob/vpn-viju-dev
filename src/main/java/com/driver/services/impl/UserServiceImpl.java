@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(password);
         //service provider not set because user havent useed any ...its his main country only
 
+        countryName = countryName.toUpperCase();//making it capital
         String code = CountryName.valueOf(countryName).toCode();
         int uid = userRepository3.save(user).getId();
 
@@ -45,6 +46,7 @@ public class UserServiceImpl implements UserService {
         country.setCountryName(CountryName.valueOf(countryName));
         country.setCode(CountryName.valueOf(countryName).toCode());
         country.setUser(user);
+        user.setConnected(false);
         countryRepository3.save(country);
         user.setOriginalCountry(country);
         userRepository3.save(user);

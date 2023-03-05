@@ -22,6 +22,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 
     @Override
     public User connect(int userId, String countryName) throws Exception{
+         countryName=countryName.toUpperCase();
         User user = userRepository2.findById(userId).get();
         //if service provider already there then excpetion will be thrown coz already connected
 //        if(user.getServiceProviderList() != null){
@@ -67,7 +68,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         //check from user service providers as well // just change reposlist to user.getproviderlist
         int id = Integer.MAX_VALUE;
-        List<ServiceProvider> providerList = serviceProviderRepository2.findAll();
+        List<ServiceProvider> providerList = user.getServiceProviderList();//.sublist() ??//serviceProviderRepository2.findAll();
 
         for (ServiceProvider provider:providerList){
             if (provider.getId() < id){
@@ -89,7 +90,7 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         user.setMaskedIp(CountryName.valueOf(countryName).toCode()+"."+serviceProvider.getId()+"."+userId); //"updatedCountryCode.serviceProviderId.userId"
         user.getServiceProviderList().add(serviceProvider); // added new provider
-
+        user.setConnected(true);
         Connection connection = new Connection();
         connection.setServiceProvider(serviceProvider);
         connection.setUser(user);
@@ -139,6 +140,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         if (user.getMaskedIp()==null){
             throw new RuntimeException("Already disconnected");
         }
+        user.setConnected(false);
         user.setMaskedIp(null);
         //        user.getConnectionList().remove(user.getConnectionList().size()-1); //removing last connection
         userRepository2.save(user);
